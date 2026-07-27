@@ -3,15 +3,13 @@
 
 Tu es un **Architecte Cybersécurité Senior**, **Lead SOC**, **Expert IA Générative**, **Consultant en présentation exécutive** et **membre d'un jury de PFE**.
 
-Tu dois créer **la présentation finale** de mon projet de fin d'études.
+Tu dois créer **la présentation finale** de mon stage ingénieur pour les responsables du département IT de star assurances.
 
 Cette présentation sera réalisée devant :
 
 - un jury d'ingénieurs
 - des responsables IT
-- des responsables cybersécurité
-- des architectes techniques
-- des responsables de STAR Assurances
+- des responsables cybersécurité , devops , systeme , reseau
 
 La présentation doit être :
 
@@ -51,23 +49,9 @@ Pendant la soutenance, je lancerai une analyse avec la plateforme en utilisant *
 
 La démonstration doit être intégrée naturellement dans le scénario de la présentation.
 
-Il faut donc prévoir une transition fluide entre les slides et la démonstration.
+Il faut donc prévoir un slide disant démonstration.
 
 Le jury doit comprendre que la plateforme fonctionne réellement et ne repose pas sur une démonstration statique.
-
-La démonstration devra montrer notamment :
-
-- authentification
-- chargement des logs
-- analyse complète
-- détection automatique
-- extraction des IOC
-- enrichissement OSINT
-- techniques MITRE ATT&CK
-- Kill Chain
-- Live Threat Map
-- plan de remédiation
-- export PDF
 
 ---
 
@@ -82,7 +66,7 @@ Tu devras analyser :
 - les couleurs
 - la charte graphique
 - la disposition
-- les icônes
+- les icônes, le logo de SAQR
 - les animations suggérées
 - le niveau de texte
 - le style visuel
@@ -172,15 +156,15 @@ Elle automatise les tâches répétitives afin que l'analyste puisse se concentr
 
 Présenter le pipeline complet.
 
+Analyst SOC
+
+↓
+
 Frontend React
 
 ↓
 
 Backend FastAPI
-
-↓
-
-Pipeline IA
 
 ↓
 
@@ -195,6 +179,17 @@ IOC Extraction
 IOC Enrichment
 
 ↓
+Pipeline IA /LLM
+
+↓
+
+RAG
+
+↓
+
+Agent Triage (agents paralleles)
+
+↓
 
 MITRE Mapping
 
@@ -204,15 +199,11 @@ Kill Chain
 
 ↓
 
-RAG
-
-↓
-
-LLM
-
-↓
-
 Remediation
+
+↓
+
+Confidence scoring
 
 ↓
 
@@ -236,21 +227,8 @@ Export PDF
 
 Expliquer pourquoi une architecture Multi-Agent.
 
-Chaque agent possède une responsabilité unique.
+Chaque agent possède une responsabilité unique. on a 4 agents: triage ,mapping, killchain , remediation qui reçoivent les donnees de l'enrichissement IOC parallèle 
 
-Sanitizer
-
-Classifier
-
-MITRE Mapper
-
-Kill Chain Builder
-
-IOC Enrichment
-
-Remediation
-
-Report Generator
 
 Mettre en avant :
 
@@ -326,7 +304,7 @@ Extraction automatique de :
 - IP
 - domaines
 - emails
-- autres IOC utiles
+- autres IOC utiles    
 
 ---
 
@@ -464,7 +442,7 @@ Mettre en avant :
 
 ✔ Amélioration de la prise de décision
 
----
+--- on a aussi gestion multi-utilisateurs, RBAC 3 tupes admin, analyst et auditor et l'admin peut changer leurs mots de passe ou creer/supprimer des comptes et JWT avec au moins 12 caracteres SSO et le token expire et tu doit rentrer ton mdp et tu dois raffraichir mdp en 7 jours.
 
 # Perspectives
 
@@ -473,8 +451,7 @@ Mettre en avant :
 - Sigma avancé
 - nouveaux connecteurs SIEM
 - tableau de bord temps réel
-- authentification SSO
-- gestion multi-utilisateurs
+- filtre d'incidents
 
 ## Moyen terme
 
