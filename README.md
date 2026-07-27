@@ -1,535 +1,734 @@
-# Contexte — Préparation d'une présentation technique pour les responsables IT
-
-Je termine un stage de fin d'études (8 semaines) à STAR Assurances (compagnie d'assurance en Tunisie), où j'ai construit une plateforme SOC (Security Operations Center) alimentée par l'IA. Je dois présenter ce projet aux **responsables IT de l'entreprise** — un public technique mais pas nécessairement spécialiste en IA/LLM.
-
-Aide-moi à préparer une présentation complète et structurée, couvrant absolument tous les aspects du projet : problématique, conception, architecture, RAG, cloud/infra, IA, sécurité, fonctionnalités. Je veux un support que je peux directement utiliser pour construire mes slides et mon discours.
+# Présentation complète — SOC AI Platform
+## Plateforme intelligente d'analyse et de réponse aux incidents de cybersécurité
+### Projet de fin d'études — STAR Assurances
 
 ---
 
-## 1. Problématique métier
+# Objectif de la présentation
 
-Les compagnies d'assurance font face en continu à des menaces cyber : phishing, vol de credentials, fraude, accès non autorisé aux données clients. L'équipe sécurité de STAR avait besoin d'un outil capable de prendre un **log brut** ou une **alerte** en entrée et de produire automatiquement :
-- Classification de la menace avec mappage MITRE ATT&CK
-- Reconstruction de la chaîne d'attaque (Kill Chain) avec timeline
-- Enrichissement des IOC (IP, domaines) via des sources OSINT
-- Rapport d'analyse complet avec export PDF officiel
-- Recommandations de remédiation opérationnelles, structurées selon NIST SP 800-61 (Containment/Eradication/Recovery/Detection)
-- Score de confiance déterministe et honnête (pas une auto-évaluation du modèle IA)
+Cette présentation ne doit pas seulement montrer une application.
 
-**Contrainte de sécurité stricte imposée dès le départ** : la plateforme ne doit **jamais** envoyer de données sensibles (identifiants de contrats, emails clients) à un LLM externe. Seules les données techniques nécessaires sont transmises, après une couche de sanitization RGPD systématique.
+Le but est de convaincre le jury : les responsables IT de star assurances que le projet apporte une réelle valeur opérationnelle à un SOC moderne.
+
+Le fil conducteur est simple :
+
+> Comment transformer des logs bruts en une analyse complète d'incident, fiable, contextualisée et directement exploitable par un analyste SOC ? le but est d'aider l'équipe à gagner du temps , d'effort et rend l'analyse plus fiable et sur grande echelle avec tous les sources necessaires pour toute personne de l'equipe, du junior à l'expert.
 
 ---
 
-## 2. Architecture technique (pipeline en 9 couches)
+# Plan de la présentation
 
-1. **Frontend** — React 18/19, Tailwind CSS, Axios, d3-geo/topojson-client (carte de menaces géolocalisées en temps réel)
-2. **API Gateway** — FastAPI (Python 3.12), authentification JWT
-3. **Sanitization Layer** — Regex + Pydantic v2 : masquage RGPD (emails, numéros de contrat) et extraction d'IOC (IP, domaines) avant tout envoi au LLM
-4. **IOC Enrichment** — appels parallèles asynchrones (asyncio) à VirusTotal, AbuseIPDB, AlienVault OTX
-5. **RAG Knowledge Base** — ChromaDB (base vectorielle) + Sentence-BERT pour l'embedding, **11 688 chunks indexés** provenant de 5 référentiels de sécurité officiels : MITRE ATT&CK, D3FEND, CAPEC, CISA KEV, OWASP Top 10
-6. **Multi-Agent Pipeline** — orchestré avec LangGraph, 4 agents IA séquentiels sur Groq (modèle Llama 3.3 70B, température=0 pour un maximum de reproductibilité) : **Triage → Mapping MITRE → Kill Chain → Remediation**
-7. **Confidence Scoring** — calcul déterministe (pas d'auto-évaluation du LLM), basé sur 5 critères pondérés
-8. **Report Engine** — génération PDF (ReportLab) + Live Threat Map interactive (SVG/d3-geo)
-9. **Data Storage** — PostgreSQL (colonnes JSONB pour les données structurées complexes) + Redis
-
-**Infrastructure** : conteneurisation Docker, orchestration Kubernetes (testé sur Minikube en environnement de développement), namespace dédié `soc-platform`.
-
-**Authentification & sécurité applicative** : JWT (access token 1h / refresh token 7 jours), RBAC à 3 rôles (admin/analyst/auditor), politique de mot de passe conforme ANSSI (12 caractères minimum, historique des 5 derniers mots de passe, expiration à 60 jours, blocage après 3 tentatives échouées).
-
----
-
-## 3. Le cœur du système — les 4 agents IA
-
-**Agent 1 — Triage** : classifie le type d'incident et évalue sa sévérité (1-10), en s'appuyant sur le RAG (ATT&CK/CAPEC/CISA) pour ancrer sa classification dans des référentiels réels plutôt que d'improviser.
-
-**Agent 2 — Mapping** : identifie les techniques MITRE ATT&CK précises (avec sous-techniques, ex. T1003.001 plutôt que T1003 générique), avec description de chaque technique et recommandation de détection spécifique. Chaque technique proposée est validée contre une whitelist des vrais identifiants MITRE (anti-hallucination).
-
-**Agent 3 — Kill Chain** : reconstruit la chronologie de l'attaque, phase par phase (Reconnaissance → Initial Access → Execution → ... → Impact), avec fusion intelligente des événements répétitifs et respect strict de la chronologie réelle des logs.
-
-**Agent 4 — Remediation** : génère un plan de réponse à incident opérationnel structuré selon les 4 phases NIST SP 800-61 (Containment/Eradication/Recovery/Detection Improvements), avec pour chaque action : preuve associée, procédure détaillée, commandes concrètes (PowerShell, EDR, Firewall), impact métier potentiel, et règles de détection SIEM prêtes à l'emploi dans 3 formats (Sigma, Splunk SPL, Microsoft Sentinel KQL).
-
-**Transparence des sources** : le système n'affiche jamais seulement "d'après D3FEND" de manière vague — il expose la vraie liste des extraits de connaissance effectivement récupérés par le moteur RAG pour chaque analyse, garantissant que chaque recommandation est traçable à une source réelle.
-
----
-
-## 4. Fiabilité et honnêteté du système (point différenciant fort)
-
-C'est un axe que je veux particulièrement mettre en avant : contrairement à beaucoup de démonstrations IA qui affichent une confiance artificiellement élevée, ce système est conçu pour être **honnête sur ses propres limites** :
-- Le score de confiance n'est **jamais un simple pourcentage auto-déclaré par le LLM** — il est recalculé de façon déterministe à partir de 5 critères vérifiables : qualité des preuves textuelles, corroboration OSINT réelle (VirusTotal/AbuseIPDB), cohérence entre les techniques MITRE et leurs preuves, cohérence entre les 4 agents entre eux, et pénalités uniquement sur des contradictions factuelles (jamais sur de simples absences d'information).
-- Chaque affirmation du rapport est classée en **Confirmé / Probable / Non confirmé**, distinguant explicitement ce que les logs prouvent de ce qui est déduit ou simplement supposé.
-- Sur des logs ambigus ou peu détaillés, le système peut afficher un score de confiance bas (ex. 17-48%) plutôt que de prétendre à tort être sûr de lui — comportement volontairement conçu ainsi.
-
----
-
-## 5. Ce que je veux dans la présentation générée
-
-Structure-moi une présentation complète, avec pour chaque section : le message clé à faire passer, les points techniques à mentionner, et des suggestions de visuels/schémas (ex. schéma du pipeline, capture d'écran type, diagramme d'architecture). Découpe en sections classiques d'une présentation projet :
 1. Contexte et problématique
-2. Objectifs
-3. Architecture globale (avec le pipeline en 9 couches)
-4. Zoom sur le RAG et la base de connaissances
-5. Zoom sur les 4 agents IA et leur logique
-6. Sécurité et conformité (sanitization RGPD, JWT, RBAC)
-7. Infrastructure Cloud/Kubernetes
-8. Fiabilité et honnêteté du scoring (point différenciant)
-9. Démonstration (que montrer en live, dans quel ordre)
-10. Limites connues et travaux futurs (sois transparent, ne les cache pas — c'est plus crédible)
-11. Conclusion et valeur pour STAR
-
-Pour chaque section, donne-moi aussi 2-3 questions probables que des responsables IT pourraient poser, avec des pistes de réponse — je veux être prête à improviser si on me challenge.
-
-
-
-
-
-Le projet est une plateforme SOC (Security Operations Center) intelligente appelée **SOC AI Platform**.
-
-Je veux que tu joues le rôle d'un architecte cybersécurité senior et d'un responsable technique qui prépare une soutenance professionnelle.
-
-Cette présentation est destinée à des ingénieurs expérimentés.
-
-Je veux donc une présentation très technique mais pédagogique.
-
-Ne simplifie pas les concepts.
-
-Je veux être capable de répondre aux questions du jury.
+2. Les objectifs du projet
+3. Présentation de la plateforme appelée SAQR
+4. Architecture générale
+5. Pipeline complet de traitement
+6. Architecture Multi-Agent IA
+7. Intelligence augmentée par RAG
+8. Détection MITRE ATT&CK
+9. Reconstruction automatique de la Kill Chain
+10. IOC Extraction & IOC Enrichment
+11. Live Threat Map
+12. Plan de remédiation intelligent
+13. Rapport PDF professionnel
+14. Technologies utilisées
+15. Infrastructure Cloud
+16. Sécurité de la plateforme
+17. Résultats obtenus
+18. Valeur ajoutée
+19. Perspectives d'évolution
+20. Conclusion
 
 ---
 
-# Objectif
+# 1. Contexte
 
-Prépare une présentation complète du projet depuis zéro.
+Les compagnies d'assurance manipulent quotidiennement des données sensibles :
 
-La présentation doit durer environ 30 à 40 minutes.
+- données clients
+- données financières
+- contrats
+- informations personnelles
 
-Je veux comprendre chaque partie et non apprendre par cœur.
+Ces organisations sont donc des cibles privilégiées des cyberattaques :
 
-Pour chaque partie :
+- Phishing
+- Credential Theft
+- Malware
+- Ransomware
+- Exfiltration de données
+- Accès non autorisés
 
-- expliquer le problème
-- expliquer pourquoi cette solution a été choisie
-- expliquer les alternatives
-- expliquer les avantages
-- expliquer les limites
-- donner des exemples
-- préparer les questions possibles du jury
-- proposer les réponses
-
----
-
-# Je veux que la présentation couvre absolument :
-
-## 1. Présentation générale
-
-- contexte STAR Assurances
-- problème rencontré dans un SOC
-- pourquoi utiliser l'IA
-- objectifs du projet
+Le Security Operations Center (SOC) est chargé de surveiller ces menaces en continu.
 
 ---
 
-## 2. Architecture générale
+# Le problème d'un SOC classique
 
-Expliquer complètement l'architecture.
+Aujourd'hui un analyste SOC reçoit chaque jour :
 
-Frontend React
+- plusieurs milliers voire millions de logs
+- des alertes provenant de plusieurs outils
+- des IOC à analyser
+- des rapports à produire
+
+Les difficultés sont nombreuses :
+
+- énorme volume de logs
+- surcharge des analystes
+- corrélation manuelle des événements
+- recherche OSINT chronophage
+- reconstruction de l'attaque difficile
+- recommandations souvent génériques
+- rapports rédigés manuellement
+- temps d'investigation élevé
+
+Résultat :
+
+> Les analystes passent beaucoup de temps à collecter les informations plutôt qu'à prendre des décisions de remédiation.
+
+---
+
+# Objectif du projet
+
+Développer une plateforme capable d'automatiser l'ensemble du cycle d'investigation.
+
+À partir de simples logs, la plateforme est capable de :
+
+- détecter automatiquement le type d'incident
+- analyser les événements
+- extraire les IOC
+- enrichir les IOC grâce à des sources OSINT
+- identifier les techniques MITRE ATT&CK
+- reconstruire la Kill Chain
+- générer un résumé exécutif
+- proposer une remédiation contextualisée
+- exporter automatiquement un rapport PDF professionnel
+
+L'objectif est de transformer des données brutes en informations directement exploitables.
+
+---
+
+# Présentation de la solution
+
+SAQR est une plateforme d'analyse intelligente destinée à assister les analystes SOC.
+
+Elle ne remplace pas l'analyste.
+
+Elle agit comme un assistant intelligent qui automatise les tâches répétitives et fournit une aide à la décision.
+
+Elle accompagne l'analyste durant tout le cycle de réponse à incident :
+
+- Analyse
+- Qualification
+- Enrichissement
+- Compréhension
+- Remédiation
+- Documentation
+
+---
+
+# Architecture générale
+
+```
+Utilisateur
 
 ↓
 
-Backend FastAPI
+React + TailwindCSS
 
 ↓
 
-Pipeline Multi-Agents
+FastAPI
 
 ↓
 
-LLM (Groq / Llama)
+Pipeline Multi-Agent IA
 
 ↓
-
-RAG
-
-↓
-
-ChromaDB
-
-↓
-
-PostgreSQL
-
-↓
-
-Export PDF
-
-↓
-
-Kubernetes
-
-Je veux comprendre précisément le rôle de chaque composant.
-
----
-
-## 3. Architecture IA
-
-Expliquer :
-
-Pourquoi une architecture Multi-Agent ?
-
-Pourquoi plusieurs agents ?
-
-Que fait chaque agent ?
-
-Classification
-
-MITRE
-
-Kill Chain
-
-Severity
-
-Urgency
-
-IOC Extraction
-
-OSINT
-
-Remediation
-
-Pourquoi ne pas utiliser un seul prompt ?
-
----
-
-## 4. Pipeline complet
-
-Depuis les logs jusqu'au rapport PDF.
-
-Montrer toutes les étapes.
-
-Les données qui circulent.
-
-Le rôle de chaque étape.
-
----
-
-## 5. Partie RAG
-
-Expliquer très profondément :
-
-Pourquoi le RAG ?
-
-Pourquoi pas un fine-tuning ?
-
-Pourquoi ChromaDB ?
-
-Comment fonctionne une base vectorielle ?
-
-Embeddings
-
-Chunking
-
-Vector Search
-
-Similarity
-
-Top-K
-
-Pourquoi D3FEND
-
-Pourquoi CISA
-
-Pourquoi OWASP
-
-Comment les documents sont indexés
-
-Comment ils sont retrouvés
-
-Comment ils enrichissent les réponses
-
-Comment éviter les hallucinations
-
----
-
-## 6. IA Générative
-
-Expliquer :
-
-LLM
-
-Prompt Engineering
-
-Temperature
-
-JSON Output
-
-Pourquoi imposer un schéma JSON
-
-Pourquoi parser le JSON
-
-Pourquoi utiliser parse_llm_json()
-
-Comment éviter les réponses incohérentes
-
----
-
-## 7. MITRE ATT&CK
-
-Expliquer :
-
-Technique
-
-Tactique
-
-Kill Chain
-
-IOC
-
-Pourquoi MITRE est utilisé dans les SOC
-
-Comment mon IA détecte les techniques
-
----
-
-## 8. Kill Chain
-
-Expliquer :
-
-Reconnaissance
-
-Initial Access
-
-Execution
-
-Persistence
-
-Privilege Escalation
-
-Defense Evasion
-
-Credential Access
-
-Discovery
-
-Lateral Movement
-
-Collection
-
-Exfiltration
-
-Impact
-
-Pourquoi c'est utile
-
----
-
-## 9. IOC
-
-Expliquer :
-
-IP
-
-Domain
-
-Email
-
-Hash
-
-Extraction
 
 Sanitization
 
-Enrichment
+↓
 
-VirusTotal
+IOC Extraction
 
-AlienVault OTX
+↓
 
-Pourquoi enrichir les IOC
+IOC Enrichment
 
----
+↓
 
-## 10. Sécurité
+MITRE Mapping
 
-Expliquer :
+↓
 
-JWT
+Kill Chain Builder
 
-Authentification
-
-RBAC
-
-Hash des mots de passe
-
-Refresh Token
-
-Protection API
-
-Validation
-
----
-
-## 11. Kubernetes
-
-Expliquer :
-
-Pourquoi Kubernetes
-
-Deployment
-
-Pod
-
-Service
-
-ConfigMap
-
-Secret
-
-Rolling Update
-
-Image Docker
-
-Pourquoi Kubernetes dans ce projet
-
----
-
-## 12. Docker
-
-Expliquer :
-
-Dockerfile
-
-Image
-
-Container
-
-Build
-
-COPY
-
-RUN
-
-CMD
-
-Pourquoi Docker
-
----
-
-## 13. Base de données
-
-PostgreSQL
-
-Pourquoi PostgreSQL
-
-Tables
-
-Incidents
-
-Users
-
-Historique
-
----
-
-## 14. Frontend
-
-React
-
-Pourquoi React
-
-Organisation
-
-API
-
-Affichage
-
-Export PDF
-
----
-
-## 15. Fonctionnalités
-
-Présenter toutes les fonctionnalités.
-
-Authentification
-
-Analyse
-
-Historique
-
-Export
-
-Visualisation
-
-MITRE
-
-Kill Chain
-
-Remediation
+↓
 
 RAG
 
----
+↓
 
-## 16. Démonstration
+LLM Groq Llama 3.3
 
-Préparer un scénario complet.
+↓
 
-Ce que je dois dire pendant la démonstration.
+Remediation
 
-Pourquoi chaque résultat apparaît.
+↓
 
----
+Report Generator
 
-## 17. Limites
+↓
 
-Hallucinations
+PostgreSQL + ChromaDB
 
-Qualité des logs
+↓
 
-Limites du RAG
-
-Coût
-
-Performances
+Export PDF
+```
 
 ---
 
-## 18. Améliorations futures
+# Pipeline complet
 
-SIEM réel
+Les données suivent toujours le même chemin.
 
-SOAR
+## Étape 1
 
-EDR réel
+Réception des logs
 
-Threat Intelligence
+Le système reçoit :
 
-Streaming
-
-Kafka
-
-Fine-Tuning
-
-Agents autonomes
-
-MCP
+- logs Windows
+- logs Linux
+- logs Firewall
+- logs Proxy
+- logs EDR
 
 ---
 
-## 19. Questions difficiles
+## Étape 2
 
-Préparer au moins 100 questions possibles du jury.
+Sanitization
 
-Avec des réponses très techniques.
+Avant toute interaction avec le LLM :
+
+- masquage des emails
+- masquage des numéros de contrat
+- suppression des données sensibles
+
+Ainsi, aucune donnée confidentielle n'est envoyée au modèle d'IA.
 
 ---
 
-## 20. Conclusion
+## Étape 3
 
-Résultats obtenus
+Extraction automatique des IOC
 
-Valeur ajoutée
+Le système détecte automatiquement :
 
-Impact pour STAR Assurances
+- IP
+- Domaines
+- Emails
+- Numéros de contrat
 
-Perspectives
+Les IOC sont extraits avant toute analyse.
+
+---
+
+## Étape 4
+
+IOC Enrichment
+
+Chaque IOC est automatiquement enrichi.
+
+Sources utilisées :
+
+- VirusTotal
+- AlienVault OTX
+- AbuseIPDB
+
+Le système récupère notamment :
+
+- réputation
+- score de malveillance
+- pays d'origine
+- ASN
+- opérateur réseau
+- historique des détections
+- campagnes connues
+- informations Threat Intelligence
+
+Ainsi, l'analyste dispose immédiatement d'un contexte enrichi sans effectuer de recherches manuelles.
+
+---
+
+# Live Threat Map
+
+Une fonctionnalité différenciante de la plateforme est la **Live Threat Map**.
+
+À partir des IOC enrichis :
+
+- les adresses IP sont géolocalisées
+- les domaines malveillants sont associés à leur pays lorsque l'information est disponible
+- les données issues de VirusTotal, AbuseIPDB et AlienVault OTX sont corrélées
+
+La carte affiche en temps réel :
+
+- les pays d'origine des menaces
+- les adresses IP identifiées
+- les domaines impliqués
+- les tentatives de connexion vers l'infrastructure surveillée
+
+L'objectif est d'offrir une représentation visuelle immédiate de la provenance des attaques.
+
+Cette visualisation permet aux analystes de :
+
+- identifier rapidement les zones géographiques les plus actives
+- détecter des campagnes coordonnées
+- comprendre l'origine des IOC
+- faciliter les présentations aux responsables sécurité
+
+---
+
+# Architecture Multi-Agent IA
+
+Plutôt qu'un unique prompt gigantesque, le système utilise plusieurs agents spécialisés.
+
+Chaque agent possède une responsabilité unique.
+
+## Agent Sanitizer
+
+- anonymisation
+- protection RGPD
+- extraction des IOC
+
+---
+
+## Agent Classifier
+
+- détection du type d'incident
+- sévérité
+- urgence
+
+---
+
+## Agent MITRE Mapper
+
+- détection des techniques ATT&CK
+- extraction des preuves
+- justification des techniques retenues
+
+---
+
+## Agent Kill Chain
+
+- reconstruction du scénario
+- regroupement des événements
+- ordre logique des phases
+
+---
+
+## Agent IOC Enrichment
+
+- VirusTotal
+- AbuseIPDB
+- AlienVault OTX
+
+---
+
+## Agent Remediation
+
+Production d'un plan de réponse complet.
+
+---
+
+## Agent Report Generator
+
+Création automatique du rapport PDF.
+
+---
+
+# Pourquoi une architecture Multi-Agent ?
+
+Cette architecture apporte plusieurs avantages :
+
+- responsabilités clairement séparées
+- maintenance facilitée
+- ajout de nouveaux agents sans modifier les autres
+- débogage plus simple
+- meilleure évolutivité
+- meilleure réutilisabilité
+
+Chaque agent est indépendant mais collabore avec les autres.
+
+---
+
+# Intelligence augmentée par RAG
+
+Le modèle IA ne travaille pas uniquement avec ses connaissances d'entraînement.
+
+Avant chaque analyse, le système interroge automatiquement une base documentaire.
+
+Référentiels utilisés :
+
+- MITRE ATT&CK
+- D3FEND
+- CISA
+- CAPEC
+- OWASP Top 10
+
+Ces documents sont indexés dans ChromaDB sous forme de vecteurs.
+
+Le moteur RAG récupère les passages les plus pertinents et les injecte dans le contexte du LLM.
+
+---
+
+# Pourquoi utiliser un RAG ?
+
+Le RAG permet :
+
+- d'utiliser des connaissances actualisées
+- de réduire les hallucinations
+- d'améliorer la précision
+- d'aligner les recommandations avec les standards internationaux
+- de fournir des réponses traçables
+
+Chaque recommandation est donc appuyée par une source documentaire pertinente.
+
+---
+
+# Corrélation MITRE ATT&CK
+
+Le système détecte automatiquement :
+
+- les tactiques
+- les techniques
+- les sous-techniques
+
+Pour chaque technique détectée, la plateforme fournit :
+
+- son identifiant MITRE
+- une description
+- les preuves présentes dans les logs
+- la justification du choix
+- des recommandations de détection
+
+L'objectif est de standardiser l'analyse et de faciliter la communication entre analystes.
+
+---
+
+# Reconstruction automatique de la Kill Chain
+
+Une simple chronologie des événements n'est pas suffisante.
+
+Le système :
+
+- regroupe les événements similaires
+- supprime les répétitions
+- respecte l'ordre logique d'une attaque
+- reconstruit le scénario complet
+
+L'analyste comprend immédiatement la progression de l'attaquant.
+
+---
+
+# IOC Enrichment
+
+Les IOC extraits sont automatiquement enrichis.
+
+Sources :
+
+- VirusTotal
+- AlienVault OTX
+- AbuseIPDB
+
+Les informations récupérées incluent :
+
+- réputation
+- géolocalisation
+- pays
+- ASN
+- opérateur
+- campagnes connues
+- niveau de risque
+- historique de détection
+
+Toutes ces informations sont intégrées directement dans le rapport.
+
+---
+
+# Remédiation intelligente
+
+La plateforme ne se limite pas à proposer :
+
+> "Bloquer l'adresse IP"
+
+Elle génère un véritable plan de réponse.
+
+Chaque action contient :
+
+- priorité
+- phase NIST SP 800-61
+- justification
+- preuves
+- procédures détaillées
+- commandes PowerShell
+- commandes Firewall
+- impact métier
+- règles SIEM
+
+Le résultat est directement exploitable par une équipe SOC.
+
+---
+
+# Rapport PDF professionnel
+
+Le rapport contient automatiquement :
+
+- résumé exécutif
+- type d'incident
+- sévérité
+- urgence
+- score de confiance
+- MITRE ATT&CK
+- Kill Chain
+- IOC enrichis
+- Live Threat Map
+- remédiation
+- règles SIEM
+- synthèse finale
+
+Le rapport est exportable au format PDF.
+
+Il peut être transmis directement aux responsables sécurité.
+
+---
+
+# Technologies utilisées
+
+## Backend
+
+- FastAPI
+- Python
+- LangChain
+- LangGraph
+- Groq
+- Llama 3.3 70B
+- PostgreSQL
+- ChromaDB
+- Redis
+
+---
+
+## Frontend
+
+- React
+- TailwindCSS
+- React Query
+- Axios
+- D3.js
+- d3-geo
+- topojson-client
+
+---
+
+## Infrastructure
+
+- Docker
+- Kubernetes
+- Minikube
+- ConfigMap
+- Secret
+- Namespace dédié
+
+---
+
+# Sécurité de la plateforme
+
+La sécurité est intégrée dès la conception.
+
+Fonctionnalités :
+
+- JWT
+- RBAC
+- Refresh Token
+- Hash des mots de passe
+- Validation Pydantic
+- Sanitization RGPD
+- Protection des API
+
+Les données sensibles ne quittent jamais l'environnement sécurisé.
+
+---
+
+# Résultats obtenus
+
+La plateforme permet :
+
+✔ Détection automatique des incidents
+
+✔ Analyse entièrement automatisée
+
+✔ Extraction automatique des IOC
+
+✔ Enrichissement OSINT instantané
+
+✔ Visualisation géographique des menaces
+
+✔ Reconstruction automatique de la Kill Chain
+
+✔ Corrélation MITRE ATT&CK
+
+✔ Génération immédiate d'un rapport PDF
+
+✔ Remédiation contextualisée
+
+✔ Aide à la décision pour les analystes SOC
+
+✔ Réduction significative du temps d'investigation
+
+✔ Standardisation des rapports d'incident
+
+---
+
+# Valeur ajoutée
+
+La plateforme apporte une valeur opérationnelle à plusieurs niveaux :
+
+- gain de temps
+- homogénéisation des analyses
+- amélioration de la qualité des rapports
+- aide à la décision
+- réduction des tâches répétitives
+- meilleure compréhension des attaques
+- meilleure exploitation de la Threat Intelligence
+
+Elle transforme un processus largement manuel en un flux automatisé, cohérent et traçable.
+
+---
+
+# Perspectives d'évolution
+
+## Court terme
+
+- Support avancé Sigma
+- Plus de connecteurs SIEM
+- Tableau de bord temps réel
+- Authentification SSO
+- Gestion multi-utilisateurs
+- Alertes en temps réel
+- Historique enrichi
+
+---
+
+## Moyen terme
+
+- Détection comportementale
+- Corrélation multi-incidents
+- Graphes d'attaque
+- Analyse de malware
+- Score de risque dynamique
+- Threat Hunting assisté
+
+---
+
+## Long terme
+
+- Agent SOC autonome
+- Réponse automatique SOAR
+- Intégration Microsoft Sentinel
+- Splunk Enterprise Security
+- IBM QRadar
+- Cortex XSOAR
+- MISP
+- OpenCTI
+- Streaming Kafka
+- MCP (Model Context Protocol)
+
+---
+
+# Les points différenciants
+
+La plateforme ne se contente pas de détecter des incidents.
+
+Elle accompagne l'analyste durant tout le cycle de réponse :
+
+- Analyse
+- Qualification
+- Enrichissement
+- Compréhension
+- Visualisation
+- Remédiation
+- Documentation
+
+Elle agit comme un véritable assistant SOC intelligent plutôt qu'un simple moteur de détection.
+
+---
+
+# Les 5 messages clés à transmettre au jury
+
+## 1. Une architecture IA modulaire
+
+Chaque agent est spécialisé dans une étape précise de l'investigation, ce qui rend la plateforme évolutive, maintenable et facilement extensible.
+
+---
+
+## 2. Des décisions fondées sur des référentiels reconnus
+
+Les analyses et recommandations sont enrichies par MITRE ATT&CK, D3FEND, CISA, CAPEC et OWASP grâce au RAG, garantissant des résultats contextualisés et conformes aux bonnes pratiques.
+
+---
+
+## 3. Une automatisation de bout en bout
+
+À partir de logs bruts, la plateforme produit automatiquement :
+
+- la classification
+- les IOC enrichis
+- les techniques MITRE
+- la Kill Chain
+- le plan de remédiation
+- le rapport PDF
+
+sans intervention manuelle.
+
+---
+
+## 4. Une architecture pensée pour un environnement industriel
+
+La plateforme repose sur des technologies modernes :
+
+- React
+- FastAPI
+- PostgreSQL
+- ChromaDB
+- Docker
+- Kubernetes
+
+Elle est conçue pour être déployée, maintenue et faire évoluer un SOC réel.
+
+---
+
+## 5. Un impact opérationnel concret
+
+Le projet permet :
+
+- de réduire le temps d'investigation
+- d'améliorer la prise de décision
+- de standardiser les rapports
+- de fournir une vision globale des attaques grâce à la Live Threat Map
+- d'augmenter l'efficacité des analystes SOC sans remplacer leur expertise
+
+---
+
+# Conclusion
+
+SOC AI Platform démontre qu'il est possible d'associer intelligence artificielle, Threat Intelligence, référentiels de cybersécurité et architecture moderne pour automatiser l'ensemble du cycle de réponse à incident.
+
+Le projet ne cherche pas uniquement à détecter des attaques. Il vise à fournir aux analystes un assistant intelligent capable de transformer des logs bruts en une analyse complète, contextualisée, documentée et directement exploitable.
+
+Cette approche répond aux enjeux actuels des SOC : faire face à l'augmentation du volume des alertes, réduire le temps d'investigation, homogénéiser les analyses et améliorer la qualité des décisions en s'appuyant sur des standards reconnus et des informations de Threat Intelligence enrichies.
