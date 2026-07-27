@@ -77,3 +77,459 @@ Structure-moi une présentation complète, avec pour chaque section : le message
 11. Conclusion et valeur pour STAR
 
 Pour chaque section, donne-moi aussi 2-3 questions probables que des responsables IT pourraient poser, avec des pistes de réponse — je veux être prête à improviser si on me challenge.
+
+
+
+
+
+Le projet est une plateforme SOC (Security Operations Center) intelligente appelée **SOC AI Platform**.
+
+Je veux que tu joues le rôle d'un architecte cybersécurité senior et d'un responsable technique qui prépare une soutenance professionnelle.
+
+Cette présentation est destinée à des ingénieurs expérimentés.
+
+Je veux donc une présentation très technique mais pédagogique.
+
+Ne simplifie pas les concepts.
+
+Je veux être capable de répondre aux questions du jury.
+
+---
+
+# Objectif
+
+Prépare une présentation complète du projet depuis zéro.
+
+La présentation doit durer environ 30 à 40 minutes.
+
+Je veux comprendre chaque partie et non apprendre par cœur.
+
+Pour chaque partie :
+
+- expliquer le problème
+- expliquer pourquoi cette solution a été choisie
+- expliquer les alternatives
+- expliquer les avantages
+- expliquer les limites
+- donner des exemples
+- préparer les questions possibles du jury
+- proposer les réponses
+
+---
+
+# Je veux que la présentation couvre absolument :
+
+## 1. Présentation générale
+
+- contexte STAR Assurances
+- problème rencontré dans un SOC
+- pourquoi utiliser l'IA
+- objectifs du projet
+
+---
+
+## 2. Architecture générale
+
+Expliquer complètement l'architecture.
+
+Frontend React
+
+↓
+
+Backend FastAPI
+
+↓
+
+Pipeline Multi-Agents
+
+↓
+
+LLM (Groq / Llama)
+
+↓
+
+RAG
+
+↓
+
+ChromaDB
+
+↓
+
+PostgreSQL
+
+↓
+
+Export PDF
+
+↓
+
+Kubernetes
+
+Je veux comprendre précisément le rôle de chaque composant.
+
+---
+
+## 3. Architecture IA
+
+Expliquer :
+
+Pourquoi une architecture Multi-Agent ?
+
+Pourquoi plusieurs agents ?
+
+Que fait chaque agent ?
+
+Classification
+
+MITRE
+
+Kill Chain
+
+Severity
+
+Urgency
+
+IOC Extraction
+
+OSINT
+
+Remediation
+
+Pourquoi ne pas utiliser un seul prompt ?
+
+---
+
+## 4. Pipeline complet
+
+Depuis les logs jusqu'au rapport PDF.
+
+Montrer toutes les étapes.
+
+Les données qui circulent.
+
+Le rôle de chaque étape.
+
+---
+
+## 5. Partie RAG
+
+Expliquer très profondément :
+
+Pourquoi le RAG ?
+
+Pourquoi pas un fine-tuning ?
+
+Pourquoi ChromaDB ?
+
+Comment fonctionne une base vectorielle ?
+
+Embeddings
+
+Chunking
+
+Vector Search
+
+Similarity
+
+Top-K
+
+Pourquoi D3FEND
+
+Pourquoi CISA
+
+Pourquoi OWASP
+
+Comment les documents sont indexés
+
+Comment ils sont retrouvés
+
+Comment ils enrichissent les réponses
+
+Comment éviter les hallucinations
+
+---
+
+## 6. IA Générative
+
+Expliquer :
+
+LLM
+
+Prompt Engineering
+
+Temperature
+
+JSON Output
+
+Pourquoi imposer un schéma JSON
+
+Pourquoi parser le JSON
+
+Pourquoi utiliser parse_llm_json()
+
+Comment éviter les réponses incohérentes
+
+---
+
+## 7. MITRE ATT&CK
+
+Expliquer :
+
+Technique
+
+Tactique
+
+Kill Chain
+
+IOC
+
+Pourquoi MITRE est utilisé dans les SOC
+
+Comment mon IA détecte les techniques
+
+---
+
+## 8. Kill Chain
+
+Expliquer :
+
+Reconnaissance
+
+Initial Access
+
+Execution
+
+Persistence
+
+Privilege Escalation
+
+Defense Evasion
+
+Credential Access
+
+Discovery
+
+Lateral Movement
+
+Collection
+
+Exfiltration
+
+Impact
+
+Pourquoi c'est utile
+
+---
+
+## 9. IOC
+
+Expliquer :
+
+IP
+
+Domain
+
+Email
+
+Hash
+
+Extraction
+
+Sanitization
+
+Enrichment
+
+VirusTotal
+
+AlienVault OTX
+
+Pourquoi enrichir les IOC
+
+---
+
+## 10. Sécurité
+
+Expliquer :
+
+JWT
+
+Authentification
+
+RBAC
+
+Hash des mots de passe
+
+Refresh Token
+
+Protection API
+
+Validation
+
+---
+
+## 11. Kubernetes
+
+Expliquer :
+
+Pourquoi Kubernetes
+
+Deployment
+
+Pod
+
+Service
+
+ConfigMap
+
+Secret
+
+Rolling Update
+
+Image Docker
+
+Pourquoi Kubernetes dans ce projet
+
+---
+
+## 12. Docker
+
+Expliquer :
+
+Dockerfile
+
+Image
+
+Container
+
+Build
+
+COPY
+
+RUN
+
+CMD
+
+Pourquoi Docker
+
+---
+
+## 13. Base de données
+
+PostgreSQL
+
+Pourquoi PostgreSQL
+
+Tables
+
+Incidents
+
+Users
+
+Historique
+
+---
+
+## 14. Frontend
+
+React
+
+Pourquoi React
+
+Organisation
+
+API
+
+Affichage
+
+Export PDF
+
+---
+
+## 15. Fonctionnalités
+
+Présenter toutes les fonctionnalités.
+
+Authentification
+
+Analyse
+
+Historique
+
+Export
+
+Visualisation
+
+MITRE
+
+Kill Chain
+
+Remediation
+
+RAG
+
+---
+
+## 16. Démonstration
+
+Préparer un scénario complet.
+
+Ce que je dois dire pendant la démonstration.
+
+Pourquoi chaque résultat apparaît.
+
+---
+
+## 17. Limites
+
+Hallucinations
+
+Qualité des logs
+
+Limites du RAG
+
+Coût
+
+Performances
+
+---
+
+## 18. Améliorations futures
+
+SIEM réel
+
+SOAR
+
+EDR réel
+
+Threat Intelligence
+
+Streaming
+
+Kafka
+
+Fine-Tuning
+
+Agents autonomes
+
+MCP
+
+---
+
+## 19. Questions difficiles
+
+Préparer au moins 100 questions possibles du jury.
+
+Avec des réponses très techniques.
+
+---
+
+## 20. Conclusion
+
+Résultats obtenus
+
+Valeur ajoutée
+
+Impact pour STAR Assurances
+
+Perspectives
