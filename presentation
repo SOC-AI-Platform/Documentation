@@ -1,0 +1,589 @@
+# PROMPT — Génération d'une présentation professionnelle du projet **SAQR**
+## Présentation de soutenance (30 à 40 minutes) — STAR Assurances
+
+Tu es un **Architecte Cybersécurité Senior**, **Lead SOC**, **Expert IA Générative**, **Consultant en présentation exécutive** et **membre d'un jury de PFE**.
+
+Tu dois créer **la présentation finale** de mon projet de fin d'études.
+
+Cette présentation sera réalisée devant :
+
+- un jury d'ingénieurs
+- des responsables IT
+- des responsables cybersécurité
+- des architectes techniques
+- des responsables de STAR Assurances
+
+La présentation doit être :
+
+- extrêmement professionnelle
+- moderne
+- dynamique
+- fluide
+- orientée valeur métier
+- orientée démonstration
+- orientée impact
+
+Elle doit raconter une histoire.
+
+Je ne veux pas une succession de slides.
+
+Je veux que chaque slide fasse avancer l'histoire du projet.
+
+---
+
+# IMPORTANT
+
+La présentation ne doit **pas dépasser 18 slides** (hors slide de remerciement éventuelle).
+
+Le but n'est pas de tout mettre sur les slides.
+
+Les slides doivent contenir uniquement les idées clés, des schémas, des illustrations et très peu de texte.
+
+Toutes les explications détaillées devront être données dans les notes du présentateur ou dans le discours.
+
+---
+
+# Démonstration obligatoire
+
+La présentation comportera une **démonstration en direct**.
+
+Pendant la soutenance, je lancerai une analyse avec la plateforme en utilisant **de vrais logs**.
+
+La démonstration doit être intégrée naturellement dans le scénario de la présentation.
+
+Il faut donc prévoir une transition fluide entre les slides et la démonstration.
+
+Le jury doit comprendre que la plateforme fonctionne réellement et ne repose pas sur une démonstration statique.
+
+La démonstration devra montrer notamment :
+
+- authentification
+- chargement des logs
+- analyse complète
+- détection automatique
+- extraction des IOC
+- enrichissement OSINT
+- techniques MITRE ATT&CK
+- Kill Chain
+- Live Threat Map
+- plan de remédiation
+- export PDF
+
+---
+
+# Je fournirai également
+
+Je vais joindre plusieurs slides que j'ai déjà réalisées.
+
+Ces slides serviront uniquement de référence graphique.
+
+Tu devras analyser :
+
+- les couleurs
+- la charte graphique
+- la disposition
+- les icônes
+- les animations suggérées
+- le niveau de texte
+- le style visuel
+
+Puis reformuler entièrement leur contenu afin que toute la présentation possède une identité graphique cohérente.
+
+Ne copie jamais le texte existant.
+
+Conserve uniquement le style graphique.
+
+---
+
+# Le contexte
+
+Le projet a été réalisé chez STAR Assurances.
+
+Il s'agit d'une plateforme SOC intelligente basée sur l'intelligence artificielle.
+
+Elle automatise tout le cycle d'analyse d'un incident.
+
+À partir de simples logs, elle est capable de produire une investigation complète.
+
+---
+
+# Le problème
+
+Présenter les difficultés rencontrées dans un SOC classique.
+
+Mettre en évidence :
+
+- énorme volume de logs
+- multiplication des alertes
+- surcharge des analystes
+- corrélation manuelle
+- enrichissement OSINT manuel
+- difficulté à reconstruire une attaque
+- difficulté à qualifier rapidement un incident
+- génération manuelle des rapports
+- recommandations souvent génériques
+- temps d'investigation très important
+
+Le message doit être clair :
+
+Les analystes passent davantage de temps à chercher des informations qu'à prendre des décisions.
+
+---
+
+# Les objectifs
+
+Présenter les objectifs du projet.
+
+Créer une plateforme capable de :
+
+- recevoir des logs bruts
+- analyser automatiquement les événements
+- classifier les incidents
+- extraire les IOC
+- enrichir automatiquement les IOC
+- détecter les techniques MITRE ATT&CK
+- reconstruire la Kill Chain
+- produire une synthèse exécutive
+- générer une remédiation contextualisée
+- exporter un rapport PDF professionnel
+
+---
+
+# Présentation générale de la solution
+
+Expliquer que la plateforme agit comme un véritable assistant SOC.
+
+Elle accompagne l'analyste durant tout le cycle de réponse à incident :
+
+- Analyse
+- Qualification
+- Enrichissement
+- Compréhension
+- Remédiation
+- Documentation
+
+Elle ne remplace jamais l'analyste.
+
+Elle automatise les tâches répétitives afin que l'analyste puisse se concentrer sur les décisions.
+
+---
+
+# Architecture générale
+
+Présenter le pipeline complet.
+
+Frontend React
+
+↓
+
+Backend FastAPI
+
+↓
+
+Pipeline IA
+
+↓
+
+Sanitization
+
+↓
+
+IOC Extraction
+
+↓
+
+IOC Enrichment
+
+↓
+
+MITRE Mapping
+
+↓
+
+Kill Chain
+
+↓
+
+RAG
+
+↓
+
+LLM
+
+↓
+
+Remediation
+
+↓
+
+Report Generator
+
+↓
+
+PostgreSQL
+
+↓
+
+ChromaDB
+
+↓
+
+Export PDF
+
+---
+
+# Architecture Multi-Agent
+
+Expliquer pourquoi une architecture Multi-Agent.
+
+Chaque agent possède une responsabilité unique.
+
+Sanitizer
+
+Classifier
+
+MITRE Mapper
+
+Kill Chain Builder
+
+IOC Enrichment
+
+Remediation
+
+Report Generator
+
+Mettre en avant :
+
+- modularité
+- maintenance
+- évolutivité
+- débogage
+- réutilisation
+
+---
+
+# Intelligence augmentée par RAG
+
+Expliquer que le modèle ne répond jamais uniquement grâce à son entraînement.
+
+Avant chaque génération, il récupère automatiquement les connaissances pertinentes.
+
+Référentiels utilisés :
+
+- MITRE ATT&CK
+- D3FEND
+- CISA
+- CAPEC
+- OWASP
+
+Expliquer :
+
+- embeddings
+- ChromaDB
+- recherche vectorielle
+- Top-K
+- contexte injecté au LLM
+
+Montrer que cela permet :
+
+- moins d'hallucinations
+- réponses contextualisées
+- recommandations réalistes
+- recommandations conformes aux standards
+
+---
+
+# MITRE ATT&CK
+
+Le système :
+
+- détecte automatiquement les techniques
+- extrait les preuves
+- explique pourquoi la technique est retenue
+- propose des recommandations de détection
+
+Mettre en avant la validation des identifiants MITRE afin d'éviter les techniques inventées.
+
+---
+
+# Kill Chain
+
+Montrer que la plateforme ne produit pas une simple chronologie.
+
+Elle :
+
+- fusionne les événements similaires
+- supprime les répétitions
+- ordonne les étapes
+- reconstruit le scénario d'attaque
+
+---
+
+# IOC Extraction
+
+Extraction automatique de :
+
+- IP
+- domaines
+- emails
+- autres IOC utiles
+
+---
+
+# IOC Enrichment
+
+Chaque IOC est enrichi automatiquement grâce à :
+
+- VirusTotal
+- AbuseIPDB
+- AlienVault OTX
+
+Le système récupère :
+
+- réputation
+- score de risque
+- pays d'origine
+- ASN
+- opérateur réseau
+- campagnes connues
+- informations Threat Intelligence
+
+Toutes ces informations sont intégrées automatiquement dans le rapport.
+
+---
+
+# Live Threat Map
+
+Présenter cette fonctionnalité comme une valeur ajoutée importante.
+
+À partir des informations récupérées par :
+
+- VirusTotal
+- AbuseIPDB
+- AlienVault OTX
+
+la plateforme affiche :
+
+- les pays d'origine des menaces
+- les adresses IP malveillantes
+- les domaines détectés
+- les tentatives de connexion
+
+La carte permet de visualiser immédiatement la provenance des attaques.
+
+Elle améliore considérablement la compréhension de l'incident.
+
+---
+
+# Remédiation intelligente
+
+La plateforme ne répond jamais simplement :
+
+"Bloquer cette IP."
+
+Elle génère un véritable plan de réponse.
+
+Chaque action contient :
+
+- priorité
+- justification
+- phase NIST
+- impact métier
+- procédures
+- commandes
+- règles SIEM
+
+---
+
+# Rapport PDF
+
+Le rapport contient :
+
+- résumé exécutif
+- MITRE
+- Kill Chain
+- IOC
+- Live Threat Map
+- remédiation
+- règles SIEM
+
+Export PDF professionnel.
+
+---
+
+# Technologies
+
+Backend
+
+- FastAPI
+- LangChain
+- LangGraph
+- Groq
+- PostgreSQL
+- ChromaDB
+- Redis
+
+Frontend
+
+- React
+- TailwindCSS
+- React Query
+
+Infrastructure
+
+- Docker
+- Kubernetes
+
+---
+
+# Résultats obtenus
+
+Mettre en avant :
+
+✔ Détection automatique
+
+✔ Analyse automatisée
+
+✔ Extraction IOC
+
+✔ Enrichissement OSINT
+
+✔ Corrélation MITRE
+
+✔ Reconstruction Kill Chain
+
+✔ Visualisation géographique
+
+✔ Rapport PDF
+
+✔ Remédiation contextualisée
+
+✔ Réduction du temps d'investigation
+
+✔ Standardisation des analyses
+
+✔ Amélioration de la prise de décision
+
+---
+
+# Perspectives
+
+## Court terme
+
+- Sigma avancé
+- nouveaux connecteurs SIEM
+- tableau de bord temps réel
+- authentification SSO
+- gestion multi-utilisateurs
+
+## Moyen terme
+
+- détection comportementale
+- graphes d'attaque
+- analyse malware
+- corrélation multi-incidents
+- score de risque dynamique
+
+## Long terme
+
+- Agent SOC autonome
+- SOAR
+- Microsoft Sentinel
+- Splunk ES
+- IBM QRadar
+- Cortex XSOAR
+- OpenCTI
+- MISP
+
+---
+
+# Dernière partie — Pourquoi le projet s'appelle SAQR ?
+
+La présentation doit se terminer par une slide forte, mémorable et symbolique.
+
+Le nom du projet est **SAQR**.
+
+**SAQR** signifie **Faucon**.
+
+Le nom n'a pas été choisi pour son aspect esthétique.
+
+Chaque caractéristique du faucon représente une philosophie de conception de la plateforme.
+
+## 1. Une vision extrêmement large
+
+Le faucon surveille un immense territoire sans laisser de zone morte.
+
+De la même manière, le pipeline en plusieurs couches analyse chaque log, chaque événement et chaque alerte tout au long du processus d'investigation.
+
+Rien n'est laissé au hasard.
+
+---
+
+## 2. Une vision extrêmement précise
+
+Le faucon possède une vue capable de distinguer les moindres détails.
+
+De la même manière, SAQR ne se contente pas d'utiliser un LLM.
+
+Le RAG apporte des connaissances issues de référentiels officiels.
+
+La validation par whitelist MITRE élimine les techniques inventées.
+
+Le système privilégie des informations vérifiables plutôt que des suppositions.
+
+---
+
+## 3. Une frappe précise, jamais à l'aveugle
+
+Le faucon n'attaque jamais sans avoir identifié sa cible.
+
+De la même manière, SAQR ne produit pas un score de confiance arbitraire.
+
+Son score est déterministe.
+
+Il repose sur des preuves réelles.
+
+Le système ne s'engage que lorsque les éléments collectés corroborent effectivement les conclusions.
+
+---
+
+## 4. Rapide et silencieux
+
+Le faucon agit avec rapidité tout en restant discret.
+
+SAQR applique cette philosophie grâce à :
+
+- l'enrichissement OSINT asynchrone
+- les appels parallèles
+- l'inférence Groq à très faible latence
+- un pipeline optimisé
+
+Le résultat est une analyse complète en quelques secondes.
+
+---
+
+## Message final
+
+Conclure par une phrase forte.
+
+> **SAQR n'est pas simplement un outil d'analyse.**
+>
+> **C'est un assistant SOC intelligent capable d'observer, comprendre et guider les analystes tout au long du cycle complet de réponse à incident, avec la précision, la rapidité et la fiabilité d'un faucon.**
+
+---
+
+# Ce que je veux que tu produises
+
+Pour chaque slide :
+
+- titre
+- message clé
+- contenu très synthétique
+- ce que je dois dire à l'oral
+- schéma ou visuel conseillé
+- animation éventuelle
+- transition vers la slide suivante
+
+L'ensemble doit raconter une histoire cohérente, fluide et professionnelle.
+
+Le jury doit retenir avant tout la valeur ajoutée du projet et son impact concret sur le travail quotidien d'un SOC moderne.
