@@ -732,3 +732,14 @@ SOC AI Platform démontre qu'il est possible d'associer intelligence artificiell
 Le projet ne cherche pas uniquement à détecter des attaques. Il vise à fournir aux analystes un assistant intelligent capable de transformer des logs bruts en une analyse complète, contextualisée, documentée et directement exploitable.
 
 Cette approche répond aux enjeux actuels des SOC : faire face à l'augmentation du volume des alertes, réduire le temps d'investigation, homogénéiser les analyses et améliorer la qualité des décisions en s'appuyant sur des standards reconnus et des informations de Threat Intelligence enrichies.
+
+
+
+(.venv) oumayma@STAGE-L-47-1:~/projects/soc-ai-platform/backend$ python3 -c " from app.core.database import SessionLocal from app.models.orm import UserORM from datetime import datetime, timezone
+
+db = SessionLocal() user = db.query(UserORM).filter(UserORM.username == 'admin').first() user.password_updated_at = datetim
+e.now(timezone.utc) user.failed_login_attempts = 0 db.commit() print('OK — password_updated_at remis à maintenant') db.clos
+e() "
+  File "<string>", line 1
+    from app.core.database import SessionLocal from app.models.orm import UserORM from datetime import datetime, timezone
+IndentationError: unexpected indent
