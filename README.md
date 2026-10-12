@@ -734,42 +734,15 @@ Le projet ne cherche pas uniquement à détecter des attaques. Il vise à fourni
 Cette approche répond aux enjeux actuels des SOC : faire face à l'augmentation du volume des alertes, réduire le temps d'investigation, homogénéiser les analyses et améliorer la qualité des décisions en s'appuyant sur des standards reconnus et des informations de Threat Intelligence enrichies.
 
 
-(.venv) oumayma@STAGE-L-47-1:~/projects/soc-ai-platform/backend$ python -c " from app.core.database import SessionLocal from app.models.orm import UserORM from datetime import datetime, timezone
-
-db = SessionLocal() user = db.query(UserORM).filter(UserORM.username == 'admin').first() user.password_updated_at = datetim
-e.now(timezone.utc) user.failed_login_attempts = 0 db.commit() print('OK — password_updated_at remis à maintenant') db.clos
-e() "
-  File "<string>", line 1
-    from app.core.database import SessionLocal from app.models.orm import UserORM from datetime import datetime, timezone
-IndentationError: unexpected indent
-(.venv) oumayma@STAGE-L-47-1:~/projects/soc-ai-platform/backend$ python -c " 
-from app.core.database import SessionLocal 
-from app.models.orm import UserORM 
-from datetime import datetime, timezone
-
-db = SessionLocal() 
-user = db.query(UserORM).filter(UserORM.username == 'admin').first() 
-
-user.password_updated_at = datetime.now(timezone.utc) 
-user.failed_login_attempts = 0 
-db.commit() 
-print('OK — password_updated_at remis à maintenant') 
-db.close() 
-"
-2026-09-16 19:07:37,883 INFO sqlalchemy.engine.Engine select pg_catalog.version()
-2026-09-16 19:07:37,884 INFO sqlalchemy.engine.Engine [raw sql] {}
-2026-09-16 19:07:37,889 INFO sqlalchemy.engine.Engine select current_schema()
-2026-09-16 19:07:37,890 INFO sqlalchemy.engine.Engine [raw sql] {}
-2026-09-16 19:07:37,895 INFO sqlalchemy.engine.Engine show standard_conforming_strings
-2026-09-16 19:07:37,895 INFO sqlalchemy.engine.Engine [raw sql] {}
-2026-09-16 19:07:37,908 INFO sqlalchemy.engine.Engine BEGIN (implicit)
-2026-09-16 19:07:37,910 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.is_active AS users_is_active, users.failed_login_attempts AS users_failed_login_attempts, users.password_updated_at AS users_password_updated_at, users.reset_token_hash AS users_reset_token_hash, users.reset_token_expires_at AS users_reset_token_expires_at 
-FROM users 
-WHERE users.username = %(username_1)s::VARCHAR 
- LIMIT %(param_1)s::INTEGER
-2026-09-16 19:07:37,910 INFO sqlalchemy.engine.Engine [generated in 0.00024s] {'username_1': 'admin', 'param_1': 1}
-Traceback (most recent call last):
-  File "<string>", line 9, in <module>
-    user.password_updated_at = datetime.now(timezone.utc)
-    ^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'NoneType' object has no attribute 'password_updated_at' and no __dict__ for setting new attributes
+2026-09-16 19:15:07,046 INFO sqlalchemy.engine.Engine select pg_catalog.version()
+2026-09-16 19:15:07,047 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-09-16 19:15:07,051 INFO sqlalchemy.engine.Engine select current_schema()
+2026-09-16 19:15:07,052 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-09-16 19:15:07,055 INFO sqlalchemy.engine.Engine show standard_conforming_strings
+2026-09-16 19:15:07,055 INFO sqlalchemy.engine.Engine [raw sql] {}
+2026-09-16 19:15:07,067 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-09-16 19:15:07,070 INFO sqlalchemy.engine.Engine SELECT users.id AS users_id, users.username AS users_username, users.email AS users_email, users.hashed_password AS users_hashed_password, users.role AS users_role, users.is_active AS users_is_active, users.failed_login_attempts AS users_failed_login_attempts, users.password_updated_at AS users_password_updated_at, users.reset_token_hash AS users_reset_token_hash, users.reset_token_expires_at AS users_reset_token_expires_at 
+FROM users
+2026-09-16 19:15:07,070 INFO sqlalchemy.engine.Engine [generated in 0.00020s] {}
+username = 'Admin' | role = 'admin'
+2026-09-16 19:15:07,076 INFO sqlalchemy.engine.Engine ROLLBACK
